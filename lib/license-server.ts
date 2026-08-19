@@ -61,6 +61,50 @@ export async function adminRequest(
   return data
 }
 
+export interface SiteSettings {
+  downloadUrl: string
+  downloadName: string
+  appVersion: string
+  androidApkUrl: string
+  androidApkName: string
+}
+
+export async function getDownloadInfo(): Promise<SiteSettings> {
+  const base = licenseApiUrl()
+  if (!base) {
+    throw new Error('License server URL is not configured (PLC_LICENSE_API_URL).')
+  }
+  const res = await fetch(`${base}/site/download-info`, { cache: 'no-store' })
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) {
+    throw new Error((data && (data as any).message) || `Download info error (${res.status})`)
+  }
+  return {
+    downloadUrl: (data as any).downloadUrl ?? '',
+    downloadName: (data as any).downloadName ?? '',
+    appVersion: (data as any).appVersion ?? '',
+    androidApkUrl: (data as any).androidApkUrl ?? '',
+    androidApkName: (data as any).androidApkName ?? '',
+  }
+}
+
+export async function getSiteSettings(): Promise<SiteSettings> {
+  const data = await adminRequest('/settings')
+  return (
+    (data as any).settings ?? {
+      downloadUrl: '',
+      downloadName: '',
+      appVersion: '',
+      androidApkUrl: '',
+      androidApkName: '',
+    }
+  )
+}
+
+export async function updateSiteSettings(settings: SiteSettings): Promise<void> {
+  await adminRequest('/settings', { method: 'POST', body: JSON.stringify(settings) })
+}
+
 export async function listLicenses(search?: string, status?: string): Promise<LicenseInfo[]> {
   const params = new URLSearchParams()
   if (search) params.set('search', search)

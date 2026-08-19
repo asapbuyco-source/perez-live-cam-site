@@ -1,7 +1,9 @@
-import { Download as DownloadIcon, ShieldCheck } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { MessageCircle, ShieldCheck } from 'lucide-react'
 import { Reveal } from '@/components/reveal'
-import { APP_VERSION, DOWNLOAD_NAME, DOWNLOAD_URL } from '@/lib/download'
+import { DownloadButton } from '@/components/download-button'
+import { AndroidDownloadCard } from '@/components/android-download'
+import { CONTACT_LABEL, WHATSAPP_URL } from '@/lib/contact'
+import { APP_VERSION } from '@/lib/download'
 
 const steps = [
   'Download the installer.',
@@ -36,10 +38,7 @@ export function DownloadSection() {
               </p>
 
               <div className="mt-7 flex flex-wrap items-center gap-3">
-                <Button size="lg" nativeButton={false} render={<a href={DOWNLOAD_URL} download={DOWNLOAD_NAME} />}>
-                  <DownloadIcon className="size-4" />
-                  Download for Windows
-                </Button>
+                <DownloadButton />
                 <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
                   <ShieldCheck className="size-4 text-primary" />
                   100% local · no uploads
@@ -54,8 +53,20 @@ export function DownloadSection() {
                   rel="noreferrer"
                 >
                   view all versions
+                </a>{' '}
+                ·{' '}
+                <a
+                  href={WHATSAPP_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  <MessageCircle className="size-3 text-primary" />
+                  {CONTACT_LABEL}
                 </a>
               </p>
+
+              <AndroidDownloadCard />
             </div>
 
             <ol className="flex flex-col gap-3">

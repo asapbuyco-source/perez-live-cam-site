@@ -2,6 +2,7 @@ import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { Inter, JetBrains_Mono } from 'next/font/google'
 import Script from 'next/script'
+import { AndroidAppBanner } from '@/components/android-app-banner'
 import './globals.css'
 
 const inter = Inter({
@@ -47,6 +48,7 @@ export default function RootLayout({
           {`(function(){try{var t=localStorage.getItem('plc-theme');var d=t?t==='dark':true;var c=document.documentElement.classList;c.toggle('dark',d);c.toggle('light',!d);}catch(e){}})();`}
         </Script>
         {children}
+        <AndroidAppBanner />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

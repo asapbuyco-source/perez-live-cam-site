@@ -8,10 +8,13 @@ import {
   ChevronDown,
   ChevronUp,
   Copy,
+  Download,
   KeyRound,
   LogOut,
   Plus,
   RefreshCw,
+  Save,
+  Smartphone,
 } from 'lucide-react'
 
 interface LicenseInfo {
@@ -80,6 +83,14 @@ export function AdminClient() {
   const [expanded, setExpanded] = useState<string | null>(null)
   const [notice, setNotice] = useState('')
 
+  // download settings
+  const [downloadUrl, setDownloadUrl] = useState('')
+  const [downloadName, setDownloadName] = useState('')
+  const [appVersion, setAppVersion] = useState('')
+  const [androidApkUrl, setAndroidApkUrl] = useState('')
+  const [androidApkName, setAndroidApkName] = useState('')
+  const [settingsLoaded, setSettingsLoaded] = useState(false)
+
   useEffect(() => {
     void fetch('/api/admin/session')
       .then((r) => r.json())
@@ -87,6 +98,43 @@ export function AdminClient() {
       .catch(() => setAuthed(false))
       .finally(() => setChecking(false))
   }, [])
+
+  useEffect(() => {
+    if (!authed || settingsLoaded) return
+    void fetch('/api/admin/settings')
+      .then((r) => r.json().catch(() => ({})))
+      .then((data) => {
+        const s = data?.settings
+        if (s) {
+          setDownloadUrl(s.downloadUrl ?? '')
+          setDownloadName(s.downloadName ?? '')
+          setAppVersion(s.appVersion ?? '')
+          setAndroidApkUrl(s.androidApkUrl ?? '')
+          setAndroidApkName(s.androidApkName ?? '')
+        }
+      })
+      .catch(() => {})
+      .finally(() => setSettingsLoaded(true))
+  }, [authed, settingsLoaded])
+
+  async function saveDownloadSettings() {
+    setBusy(true)
+    setNotice('')
+    try {
+      const res = await fetch('/api/admin/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ downloadUrl, downloadName, appVersion, androidApkUrl, androidApkName }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok || !data.ok) throw new Error(data.message || 'Save failed')
+      setNotice('Download settings saved.')
+    } catch (err) {
+      setNotice(`Failed: ${(err as Error).message}`)
+    } finally {
+      setBusy(false)
+    }
+  }
 
   async function login() {
     setBusy(true)
@@ -227,6 +275,91 @@ export function AdminClient() {
             {notice}
           </div>
         )}
+
+        <section className="mt-6 rounded-2xl border border-border bg-card p-6">
+          <h2 className="flex items-center gap-2 text-base font-semibold text-foreground">
+            <Download className="size-4 text-primary" />
+            Download link
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            The URL the site&apos;s Download buttons point to. Update it whenever
+            you ship a new installer.
+          </p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_1fr_160px]">
+            <label className="flex flex-col gap-1 text-sm">
+              <span className="text-muted-foreground">Download URL</span>
+              <input
+                type="url"
+                value={downloadUrl}
+                onChange={(e) => setDownloadUrl(e.target.value)}
+                placeholder="https://…/installer.exe"
+                className="h-10 rounded-lg border border-input bg-background px-3 text-sm text-foreground outline-none focus:border-ring"
+              />
+            </label>
+            <label className="flex flex-col gap-1 text-sm">
+              <span className="text-muted-foreground">File name (optional)</span>
+              <input
+                type="text"
+                value={downloadName}
+                onChange={(e) => setDownloadName(e.target.value)}
+                placeholder="Perez Live Cam-Setup-0.1.0-x64.exe"
+                className="h-10 rounded-lg border border-input bg-background px-3 text-sm text-foreground outline-none focus:border-ring"
+              />
+            </label>
+            <label className="flex flex-col gap-1 text-sm">
+              <span className="text-muted-foreground">Version</span>
+              <input
+                type="text"
+                value={appVersion}
+                onChange={(e) => setAppVersion(e.target.value)}
+                placeholder="0.1.0"
+                className="h-10 rounded-lg border border-input bg-background px-3 text-sm text-foreground outline-none focus:border-ring"
+              />
+            </label>
+          </div>
+          <div className="mt-4 flex items-center gap-3">
+            <Button onClick={() => void saveDownloadSettings()} disabled={busy || (!downloadUrl && !androidApkUrl)}>
+              <Save className="size-4" />
+              Save download links
+            </Button>
+            <span className="text-xs text-muted-foreground">
+              {downloadUrl ? 'Currently: ' + downloadUrl : 'No Windows link set'}
+            </span>
+          </div>
+
+          <div className="mt-5 border-t border-border pt-5">
+            <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+              <Smartphone className="size-4 text-primary" />
+              Android app (APK)
+            </h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Set the APK link and a banner asking Android visitors to download
+              the app will show automatically at the top of the site.
+            </p>
+            <div className="mt-3 grid gap-3 sm:grid-cols-[1fr_220px]">
+              <label className="flex flex-col gap-1 text-sm">
+                <span className="text-muted-foreground">APK download URL</span>
+                <input
+                  type="url"
+                  value={androidApkUrl}
+                  onChange={(e) => setAndroidApkUrl(e.target.value)}
+                  placeholder="https://…/perez-live-cam.apk"
+                  className="h-10 rounded-lg border border-input bg-background px-3 text-sm text-foreground outline-none focus:border-ring"
+                />
+              </label>
+              <label className="flex flex-col gap-1 text-sm">
+                <span className="text-muted-foreground">File name (optional)</span>
+                <input
+                  type="text"
+                  value={androidApkName}
+                  onChange={(e) => setAndroidApkName(e.target.value)}
+                  placeholder="Perez Live Cam.apk"
+                  className="h-10 rounded-lg border border-input bg-background px-3 text-sm text-foreground outline-none focus:border-ring"
+                />
+              </label>
+            </div>
+          </div>
+        </section>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,380px)_1fr]">
           {/* Create codes */}

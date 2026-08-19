@@ -1,4 +1,6 @@
+import { MessageCircle } from 'lucide-react'
 import { Logo } from '@/components/logo'
+import { CONTACT_LABEL, WHATSAPP_URL } from '@/lib/contact'
 
 const links = [
   { label: 'Features', href: '#features' },
@@ -40,6 +42,15 @@ export function SiteFooter() {
           <p>
             License-activated software. Demo codes available for trial use.
           </p>
+          <a
+            href={WHATSAPP_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <MessageCircle className="size-3.5 text-primary" />
+            {CONTACT_LABEL}
+          </a>
           <p>© 2026 Perez Live Cam. All rights reserved.</p>
         </div>
       </div>

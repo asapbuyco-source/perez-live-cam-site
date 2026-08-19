@@ -1,8 +1,9 @@
-import { Check, Download, PlayCircle } from 'lucide-react'
+import { Check, PlayCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { AppMockup } from '@/components/app-mockup'
 import { Reveal } from '@/components/reveal'
-import { APP_VERSION, DOWNLOAD_NAME, DOWNLOAD_URL } from '@/lib/download'
+import { DownloadButton } from '@/components/download-button'
+import { APP_VERSION } from '@/lib/download'
 
 const trust = ['Free to try', 'Windows 11', 'No account needed', '100% local']
 
@@ -34,10 +35,7 @@ export function Hero() {
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Button size="lg" nativeButton={false} render={<a href={DOWNLOAD_URL} download={DOWNLOAD_NAME} />}>
-              <Download className="size-4" />
-              Download for Windows
-            </Button>
+            <DownloadButton />
             <Button
               size="lg"
               variant="outline"

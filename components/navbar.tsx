@@ -1,12 +1,12 @@
 'use client'
 
-import { Download, Menu, X } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/logo'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { cn } from '@/lib/utils'
-import { DOWNLOAD_NAME, DOWNLOAD_URL } from '@/lib/download'
+import { DownloadButton } from '@/components/download-button'
 
 const links = [
   { label: 'Features', href: '#features' },
@@ -58,22 +58,11 @@ export function Navbar() {
 
         <div className="hidden items-center gap-2 md:flex">
           <ThemeToggle />
-          <Button size="lg" nativeButton={false} render={<a href={DOWNLOAD_URL} download={DOWNLOAD_NAME} />}>
-            <Download className="size-4" />
-            Download for Windows
-          </Button>
+          <DownloadButton />
         </div>
 
         <div className="flex items-center gap-1 md:hidden">
-          <Button
-            size="sm"
-            className="px-2.5"
-            nativeButton={false}
-            render={<a href={DOWNLOAD_URL} download={DOWNLOAD_NAME} />}
-          >
-            <Download className="size-4" />
-            Download
-          </Button>
+          <DownloadButton size="sm" label="Download" />
           <div className="hidden min-[360px]:block">
             <ThemeToggle />
           </div>
@@ -102,15 +91,7 @@ export function Navbar() {
                 {link.label}
               </a>
             ))}
-            <Button
-              className="mt-2"
-              size="lg"
-              nativeButton={false}
-              render={<a href={DOWNLOAD_URL} download={DOWNLOAD_NAME} onClick={() => setOpen(false)} />}
-            >
-              <Download className="size-4" />
-              Download for Windows
-            </Button>
+            <DownloadButton className="mt-2" size="lg" label="Download for Windows" />
             <div className="mt-2 flex items-center justify-between border-t border-border pt-3 min-[360px]:hidden">
               <span className="px-3 text-sm text-muted-foreground">Theme</span>
               <ThemeToggle />
