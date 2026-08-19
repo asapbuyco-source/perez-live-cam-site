@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { AppMockup } from '@/components/app-mockup'
 import { Reveal } from '@/components/reveal'
 import { DownloadButton } from '@/components/download-button'
+import { AndroidDownloadButton } from '@/components/android-download-button'
 import { APP_VERSION } from '@/lib/download'
 
 const trust = ['Free to try', 'Windows 11', 'No account needed', '100% local']
@@ -45,6 +46,10 @@ export function Hero() {
               <PlayCircle className="size-4" />
               See how it works
             </Button>
+          </div>
+
+          <div className="mt-3">
+            <AndroidDownloadButton />
           </div>
 
           <ul className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2">
